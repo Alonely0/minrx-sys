@@ -1,0 +1,22 @@
+[package]
+name = "minrx-sys"
+version = "0.1.0"
+edition = "2024"
+authors = ["Guillem L. Jara <4lon3ly0@tutanota.com>"]
+build = "build.rs"
+license = "(MIT OR Apache-2.0) AND BSD-2-Clause"
+repository = "https://github.com/Alonely0/minrx-sys"
+description = """
+Bindings to MinRX, Copyright (C) 2023, 2024 Michael J. Haertel. This crate
+vendors MinRX internally. For more license details, check files `README.md`
+and `LICENSE-MinRX.txt`.
+"""
+categories = ["external-ffi-bindings", "text-processing", "algorithms"]
+keywords = ["minrx", "regex", "regexp", "posix", "ere"]
+
+[lib]
+name = "minrx_sys"
+
+[build-dependencies]
+bindgen = "0.72.1"
+cc = "1.4.2"
