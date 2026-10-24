@@ -1,21 +1,32 @@
-#ifndef MINRX_SYS_LANGINFO_H
-#define MINRX_SYS_LANGINFO_H
+/*
+ * Minimal <langinfo.h> replacement for platforms that lack one (MSVC, MinGW).
+ *
+ * MinRX only needs `nl_langinfo(CODESET)` to tell whether the current
+ * LC_CTYPE locale uses UTF-8. On Windows the locale name carries the code page
+ * (e.g. "en_US.65001" or "en_US.UTF-8"), so inspect that.
+ */
+#ifndef MINRX_SYS_SHIM_LANGINFO_H
+#define MINRX_SYS_SHIM_LANGINFO_H
 
+#include <locale.h>
 #include <string.h>
-#include <wchar.h>
 
 #define CODESET 14
 
-/* Windows has no <langinfo.h>. minrx only asks for CODESET and only compares
- * the result to "UTF-8", so detect UTF-8 by decoding U+00E9 in the current
- * locale rather than parsing locale names. */
-static inline const char *nl_langinfo(int item)
+static __inline const char *
+nl_langinfo(int item)
 {
-	mbstate_t st;
-	wchar_t wc = 0;
+	const char *loc;
+
 	(void) item;
-	memset(&st, 0, sizeof st);
-	return (mbrtowc(&wc, "\xC3\xA9", 2, &st) == 2 && wc == 0xE9) ? "UTF-8" : "";
+	loc = setlocale(LC_CTYPE, (const char *) 0);
+	if (loc != (const char *) 0 &&
+	    (strstr(loc, ".65001") != (const char *) 0 ||
+	     strstr(loc, ".UTF-8") != (const char *) 0 ||
+	     strstr(loc, ".utf8") != (const char *) 0 ||
+	     strstr(loc, ".UTF8") != (const char *) 0))
+		return "UTF-8";
+	return "";
 }
 
-#endif
+#endif /* MINRX_SYS_SHIM_LANGINFO_H */

@@ -18,5 +18,4 @@ keywords = ["minrx", "regex", "regexp", "posix", "ere"]
 name = "minrx_sys"
 
 [build-dependencies]
-bindgen = "0.72.1"
 cc = "1.4.2"
